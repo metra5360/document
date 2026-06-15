@@ -24,6 +24,21 @@ npm run dev
 npm run build
 ```
 
+## Деплой на GitHub Pages
+
+Сайт доступний за адресою: `https://metra5360.github.io/document/`
+
+1. У репозиторії: **Settings → Pages → Build and deployment → Source** → оберіть **GitHub Actions** (не «Deploy from branch»).
+2. Закомітьте та запуште зміни — workflow `.github/workflows/deploy.yml` автоматично збере проєкт і опублікує папку `dist`.
+
+Локальна перевірка збірки для GitHub Pages:
+
+```bash
+npm run build
+npm run preview
+```
+
+
 ## Структура проєкту
 
 ```
