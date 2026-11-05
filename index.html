@@ -1,18 +1,254 @@
 <!doctype html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Інтерактивний Бланк-Редактор</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Бланк-Редактор</title>
+<style id="appcss">
+:root{--bg:#0f1115;--sf:#171a20;--ip:#0c0e12;--tx:#e6e8ec;--mu:#8b93a1;--bd:#2a2f38;--ac:#4b8dff;--ab:#16305c;--dg:#fb923c;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eef0f4;--sf:#fff;--ip:#f6f7f9;--tx:#1b1f27;--mu:#667085;--bd:#d9dde5;--ac:#2f6bff;--ab:#e4edff;--dg:#c2410c;color-scheme:light}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+.hide{display:none!important}
+.btn{border:1px solid var(--bd);background:var(--ip);border-radius:10px;padding:9px 12px;cursor:pointer;text-align:center}
+.btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+@media (hover:hover){.btn:hover{border-color:var(--ac)}}
+.btn:active{background:var(--ab);border-color:var(--ac)}
+.btn:focus:not(:focus-visible){outline:0}
+.btn.on,.btn.p{background:var(--ab);border-color:var(--ac);color:var(--ac);font-weight:600}
+.btn.d{color:var(--dg)}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--bd);background:var(--sf)}
+.bar h1{font-size:18px;margin:0;flex:1;min-width:140px}
+.wrap{max-width:980px;margin:0 auto;padding:20px}
+.in{width:100%;padding:10px 14px;border:1px solid var(--bd);border-radius:10px;background:var(--ip)}
+textarea.in{font-family:Merriweather,Georgia,serif;line-height:1.55;resize:vertical;min-height:240px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:18px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+@media (hover:hover){.card:hover{border-color:var(--ac)}}
+.card h3{margin:0;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card p{margin:0;color:var(--mu);font-size:13px;height:58px;overflow:hidden}
+.card small{color:var(--mu)}
+.acts{display:flex;gap:6px}.acts .btn{padding:3px 9px;font-size:13px}
+.empty{grid-column:1/-1;text-align:center;color:var(--mu);padding:60px 10px}
+.ed{display:grid;grid-template-columns:350px 1fr;align-items:start}
+.side{position:sticky;top:0;height:100vh;overflow:auto;padding:16px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;gap:8px}
+.side h4{margin:12px 0 0;padding-top:12px;border-top:1px solid var(--bd);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+.side label{font-size:13px;color:var(--mu);margin-bottom:-4px}
+.side small{color:var(--mu)}
+code{background:var(--ip);border:1px solid var(--bd);border-radius:4px;padding:0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pv{padding:16px;min-width:0}
+@media (max-width:860px){.ed{display:block}.side{position:static;height:auto}}
+@media print{.bar,.side{display:none!important}.ed{display:block}.pv{padding:0}body{background:#fff}}
+</style>
+<style id="pagecss">
+.a4{position:relative;width:100%;max-width:794px;min-height:1123px;margin:0 auto;background:#fff;color:#111;padding:56px 60px;font:17px/1.7 Merriweather,Georgia,serif;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+.hd{position:relative;text-align:center;min-height:110px}
+.hd h1{margin:0;font-size:32px;letter-spacing:.06em;text-transform:uppercase}
+.sub{font-style:italic;font-size:20px;color:#444}
+.cd{margin-top:8px;color:#333}
+.em{position:absolute;right:0;top:-10px}
+.em img,.em svg{width:100px;height:100px;object-fit:contain;display:block}
+.em img{border-radius:50%;object-fit:cover;border:2px solid #2f6bff}
+.rule{border-top:2px solid #2f6bff;margin:18px 0 26px}
+.bd{text-align:justify;min-height:600px}
+.bd p{margin:0 0 14px}
+.fld{display:inline-block}
+.fld input{width:12ch;font:inherit;color:#0b2a6b;background:#e8f0ff;border:0;border-bottom:2px solid #2f6bff;border-radius:3px 3px 0 0;padding:0 6px;outline:0}
+.fld input:focus{background:#d3e2ff}
+.ink{position:absolute;left:0;top:0;z-index:5;pointer-events:none}
+@media (max-width:640px){.a4{padding:28px 18px}.hd h1{font-size:24px}.em{position:static;margin:0 auto 8px;width:70px}.em img,.em svg{width:70px;height:70px}}
+@media print{.a4{box-shadow:none;max-width:none;min-height:0;padding:0}.fld input{background:none}}
+</style>
+</head>
+<body>
+<section id="menu">
+  <div class="bar">
+    <h1>📄 Бланк-Редактор</h1>
+    <label class="btn">Імпорт<input id="imp" type="file" accept=".json" hidden></label>
+    <button class="btn" id="expAll">Експорт усіх</button>
+  </div>
+  <div class="wrap">
+    <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="newb"></div>
+    <input id="q" class="in" type="search" placeholder="Пошук за назвою або текстом…" style="margin-top:18px">
+    <div id="list" class="grid"></div>
+  </div>
+</section>
+
+<section id="ed" class="ed hide">
+  <aside class="side">
+    <button class="btn" id="back">← До головного меню</button>
+    <h4>Тип документа</h4>
+    <div class="two" id="types"></div>
+    <h4>Шапка документа</h4>
+    <label>Назва</label><input class="in" id="fT">
+    <label>Підзаголовок</label><input class="in" id="fS">
+    <label>Місто</label><input class="in" id="fC">
+    <label>Дата</label><input class="in" id="fD">
+    <button class="btn on" id="eStd">Стандартна емблема</button>
+    <label class="btn" style="color:var(--tx)">Завантажити емблему<input id="up" type="file" accept="image/*" hidden></label>
+    <button class="btn" id="eNo">Без емблеми</button>
+    <h4>Текст документа</h4>
+    <small>Використовуйте <code>_____</code> для інтерактивних полів</small>
+    <textarea class="in" id="fB" spellcheck="true"></textarea>
+    <h4>Малювання від руки</h4>
+    <button class="btn" id="drw">🖊 Увімкнути малювання</button>
+    <button class="btn" id="clr">Очистити малюнок</button>
+    <h4>Документ</h4>
+    <button class="btn p" id="exp">⬇ Зберегти як інтерактивний HTML</button>
+    <button class="btn" id="prn">Друк / PDF</button>
+    <small id="st"></small>
+  </aside>
+  <main class="pv">
+    <div class="a4" id="a4">
+      <div class="hd"><h1 id="hT"></h1><div class="sub" id="hS"></div><div class="cd" id="hC"></div><div class="em" id="hE"></div></div>
+      <div class="rule"></div>
+      <div class="bd" id="body"></div>
+      <canvas class="ink" id="ink"></canvas>
+    </div>
+  </main>
+</section>
+
+<script>
+const K='blank-editor:docs',$=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const STAR='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#e8f0ff" stroke="#2f6bff" stroke-width="5"/><polygon points="50,15 61,40 88,42 67,59 74,85 50,70 26,85 33,59 12,42 39,40" fill="#2f6bff"/><text x="50" y="92" font-size="9" text-anchor="middle" fill="#2f6bff">UA</text></svg>';
+const TP={
+dov:{n:'Довіреність',t:'ДОВІРЕНІСТЬ',s:'на представництво інтересів',b:'Я, громадянин(ка) України, _____ (ПІБ), паспорт серії _____ № _____, виданий _____, зареєстрований(а) за адресою: _____, надаю довіреність громадянину(ці) _____ (ПІБ) на право:\n\n1. Представляти мої інтереси в _____;\n2. Отримувати від мого імені документи, довідки та інші відомості;\n3. Підписувати й подавати заяви та виконувати інші дії, пов’язані з цим дорученням.\n\nДовіреність дійсна до _____ і видана без права передоручення.\n\nПідпис: _____ / _____ (ПІБ)'},
+zay:{n:'Заява',t:'ЗАЯВА',s:'',b:'До _____ (установа)\nвід _____ (ПІБ),\nщо проживає за адресою: _____,\nтел.: _____\n\nПрошу Вас _____.\n\nДодатки: _____.\n\nПідпис: _____   Дата: _____'},
+dog:{n:'Договір',t:'ДОГОВІР',s:'про надання послуг',b:'Сторона 1: _____ (ПІБ / назва), надалі — «Замовник», та Сторона 2: _____ (ПІБ / назва), надалі — «Виконавець», уклали цей договір про таке.\n\n1. Предмет договору. Виконавець зобов’язується надати Замовнику послуги: _____.\n2. Вартість і оплата. Вартість послуг становить _____ грн. Оплата здійснюється _____.\n3. Строк дії. Договір діє з _____ до _____.\n4. Підписи сторін.\n\nЗамовник: _____   Виконавець: _____'},
+blank:{n:'Порожній бланк',t:'НАЗВА ДОКУМЕНТА',s:'',b:''}};
+let docs=[],cur=null,tm=null,mem=false,dr=false,ink;
+
+function h2t(h){const t=document.createElement('template');t.innerHTML=String(h).replace(/<input[^>]*>/gi,'_____').replace(/<\/(p|div|h\d|li)>|<br\s*\/?>/gi,'\n');return t.content.textContent.replace(/\n{3,}/g,'\n\n').trim()}
+function norm(d){d={type:'blank',subtitle:'',city:'',date:'',emblem:'none',vals:[],ink:[],...d};if(d.text==null)d.text=h2t(d.html||'');delete d.html;d.date=String(d.date).replace(/р\.\s*р\.$/,'р.');return d}
+function load(){try{docs=(JSON.parse(localStorage.getItem(K))||[]).map(norm)}catch(e){docs=[];mem=true}}
+function persist(){try{localStorage.setItem(K,JSON.stringify(docs));return true}catch(e){mem=true;return false}}
+const fmt=t=>new Date(t).toLocaleString('uk-UA',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const sz=i=>i.style.width=Math.max(12,i.value.length+2)+'ch';
+const today=()=>{const s=new Date().toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});return /р\.$/.test(s)?s:s+' р.'};
+
+/* малювання: працює і в редакторі, і в експортованому файлі */
+function inkInit(a4,cv,S,cb){
+  const x=cv.getContext('2d');let on=false,c=null;
+  function draw(){const w=a4.clientWidth,h=a4.offsetHeight,r=window.devicePixelRatio||1;
+    cv.width=w*r;cv.height=h*r;cv.style.width=w+'px';cv.style.height=h+'px';
+    x.setTransform(r,0,0,r,0,0);x.lineWidth=2.2;x.lineCap=x.lineJoin='round';x.strokeStyle='#0b2a6b';
+    S.forEach(function(s){x.beginPath();s.forEach(function(p,i){i?x.lineTo(p[0]*w,p[1]*w):x.moveTo(p[0]*w,p[1]*w)});if(s.length===1)x.lineTo(s[0][0]*w+.1,s[0][1]*w);x.stroke()})}
+  function pt(e){const b=cv.getBoundingClientRect(),w=a4.clientWidth;return [Math.round((e.clientX-b.left)/w*1e4)/1e4,Math.round((e.clientY-b.top)/w*1e4)/1e4]}
+  cv.onpointerdown=function(e){if(!on)return;e.preventDefault();cv.setPointerCapture(e.pointerId);c=[pt(e)];S.push(c);draw()};
+  cv.onpointermove=function(e){if(!c)return;c.push(pt(e));draw()};
+  cv.onpointerup=cv.onpointercancel=function(){if(c){c=null;cb&&cb()}};
+  new ResizeObserver(draw).observe(a4);
+  return{on:function(v){on=v;cv.style.pointerEvents=v?'auto':'none';cv.style.touchAction=v?'none':'auto';cv.style.cursor=v?'crosshair':''},
+    clear:function(){S.length=0;draw();cb&&cb()},set:function(s){S=s;draw()},draw:draw}
+}
+
+function renderMenu(){
+  const q=$('#q').value.trim().toLowerCase();
+  const it=docs.filter(d=>!q||d.title.toLowerCase().includes(q)||d.text.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
+  $('#list').innerHTML=it.length?it.map(d=>`<div class="card" data-id="${d.id}"><h3>${esc(d.title||'Без назви')}</h3><small>${esc((TP[d.type]||TP.blank).n)}</small><p>${esc(d.text.replace(/_{5,}/g,'…').slice(0,160))}</p><small>${fmt(d.updated)}</small><div class="acts"><button class="btn" data-a="dup">Дублювати</button><button class="btn d" data-a="del">Видалити</button></div></div>`).join(''):`<div class="empty">${docs.length?'Нічого не знайдено.':'Збережених документів ще немає.<br>Створіть перший кнопкою вище.'}</div>`;
+}
+function show(v){$('#menu').classList.toggle('hide',v!=='menu');$('#ed').classList.toggle('hide',v!=='ed');window.scrollTo(0,0)}
+function renderHead(){
+  $('#hT').textContent=cur.title;$('#hS').textContent=cur.subtitle;$('#hS').classList.toggle('hide',!cur.subtitle);
+  $('#hC').textContent=[cur.city,cur.date].filter(Boolean).join(' · ');
+  $('#hE').innerHTML=cur.emblem==='std'?STAR:cur.emblem==='none'?'':`<img src="${esc(cur.emblem)}" alt="">`;
+  $('#eStd').classList.toggle('on',cur.emblem==='std');$('#eNo').classList.toggle('on',cur.emblem==='none');
+  document.querySelectorAll('#types .btn').forEach(b=>b.classList.toggle('on',b.dataset.t===cur.type));
+}
+function renderBody(){
+  let n=0;
+  $('#body').innerHTML=cur.text.split('\n').map(l=>l.trim()?'<p>'+esc(l).replace(/_{5,}/g,()=>`<span class="fld"><input data-i="${n++}" placeholder="…"></span>`)+'</p>':'<p><br></p>').join('');
+  $('#body').querySelectorAll('input').forEach(i=>{i.value=cur.vals[i.dataset.i]||'';sz(i)});
+}
+function setDraw(v){dr=v;ink.on(v);$('#drw').textContent=v?'✔ Вимкнути малювання':'🖊 Увімкнути малювання';$('#drw').classList.toggle('on',v)}
+function open(id){
+  cur=docs.find(d=>d.id===id);if(!cur)return;
+  $('#fT').value=cur.title;$('#fS').value=cur.subtitle;$('#fC').value=cur.city;$('#fD').value=cur.date;$('#fB').value=cur.text;
+  renderHead();renderBody();show('ed');setDraw(false);ink.set(cur.ink);
+  $('#st').textContent=mem?'⚠ Лише в цій сесії':'Збережено ✓';
+}
+function create(t){
+  const p=TP[t],d={id:uid(),type:t,title:p.t,subtitle:p.s,city:'м. Київ',date:today(),emblem:t==='blank'?'none':'std',text:p.b,vals:[],ink:[],created:Date.now(),updated:Date.now()};
+  docs.push(d);persist();open(d.id);
+}
+function flush(){if(!cur)return;clearTimeout(tm);tm=null;cur.updated=Date.now();$('#st').textContent=persist()?'Збережено ✓':'⚠ Не вдалося зберегти'}
+function queue(){$('#st').textContent='Збереження…';clearTimeout(tm);tm=setTimeout(flush,400)}
+function toMenu(){flush();setDraw(false);cur=null;renderMenu();show('menu')}
+function save(name,data,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));
+  a.download=name.replace(/[^\p{L}\p{N}_-]+/gu,'_')+(type==='text/html'?'.html':'.json');a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function exportHTML(){
+  flush();
+  const c=$('#a4').cloneNode(true),s=$('#a4').querySelectorAll('input'),d=c.querySelectorAll('input');
+  s.forEach((i,k)=>d[k].setAttribute('value',i.value));
+  const h='<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(cur.title||'Документ')+'</title><style>'+$('#pagecss').textContent+'body{margin:0;background:#e9ebef;padding:16px}.x{max-width:794px;margin:0 auto 12px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;font:14px sans-serif}.x button{padding:8px 14px;cursor:pointer;border:1px solid #bbb;border-radius:8px;background:#fff}@media print{.x{display:none}body{background:#fff;padding:0}}</style></head><body><div class="x"><button id="bd">✍ Намалювати підпис</button><button id="bc">Очистити малюнок</button><button onclick="print()">Друк / PDF</button></div>'+c.outerHTML+'<scr'+'ipt>'+inkInit.toString()+';document.querySelectorAll(".fld input").forEach(function(i){i.addEventListener("input",function(){i.style.width=Math.max(12,i.value.length+2)+"ch"});i.dispatchEvent(new Event("input"))});var a=document.getElementById("a4"),k=inkInit(a,a.querySelector(".ink"),'+JSON.stringify(cur.ink)+'),o=0,b=document.getElementById("bd");k.draw();b.onclick=function(){o=!o;k.on(o);b.textContent=o?"✔ Завершити малювання":"✍ Намалювати підпис"};document.getElementById("bc").onclick=k.clear;</scr'+'ipt></body></html>';
+  save(cur.title||'document',h,'text/html');
+}
+
+$('#newb').innerHTML=Object.keys(TP).map(k=>`<button class="btn p" data-t="${k}">+ ${TP[k].n}</button>`).join('');
+$('#types').innerHTML=Object.keys(TP).map(k=>`<button class="btn" data-t="${k}">${TP[k].n}</button>`).join('');
+$('#newb').onclick=e=>{const t=e.target.dataset.t;if(t)create(t)};
+/* підтвердження в два кліки: вікна confirm у вбудованих сторінках можуть блокуватися */
+let pend=null;
+function twice(b,ask,fn){
+  if(pend&&pend.b===b){pend.r();fn();return}
+  if(pend)pend.r();
+  const o=b.textContent,h=b.classList.contains('d');
+  b.textContent=ask;b.classList.add('d');
+  const r=()=>{clearTimeout(t);b.textContent=o;b.classList.toggle('d',h);pend=null},t=setTimeout(r,3000);
+  pend={b,r};
+}
+$('#types').onclick=e=>{
+  const t=e.target.dataset.t;if(!t||t===cur.type)return;
+  const go=()=>{
+    const p=TP[t];cur.type=t;cur.title=p.t;cur.subtitle=p.s;cur.text=p.b;cur.vals=[];
+    $('#fT').value=p.t;$('#fS').value=p.s;$('#fB').value=p.b;renderHead();renderBody();queue();
+  };
+  if(cur.text.trim()&&cur.text.trim()!==TP[cur.type].b.trim())twice(e.target,'Замінити текст?',go);else go();
+};
+$('#q').oninput=renderMenu;
+$('#list').onclick=e=>{
+  const c=e.target.closest('.card');if(!c)return;const id=c.dataset.id,a=e.target.dataset.a,d=docs.find(x=>x.id===id);
+  if(a==='del'){twice(e.target,'Точно видалити?',()=>{docs=docs.filter(x=>x.id!==id);persist();renderMenu()})}
+  else if(a==='dup'){docs.push({...JSON.parse(JSON.stringify(d)),id:uid(),title:(d.title||'Без назви')+' (копія)',updated:Date.now()});persist();renderMenu()}
+  else open(id);
+};
+[['#fT','title'],['#fS','subtitle'],['#fC','city'],['#fD','date']].forEach(([s,k])=>$(s).oninput=e=>{cur[k]=e.target.value;renderHead();queue()});
+$('#fB').oninput=e=>{cur.text=e.target.value;renderBody();queue()};
+$('#body').addEventListener('input',e=>{const i=e.target;cur.vals[i.dataset.i]=i.value;sz(i);queue()});
+$('#eStd').onclick=()=>{cur.emblem='std';renderHead();queue()};
+$('#eNo').onclick=()=>{cur.emblem='none';renderHead();queue()};
+$('#up').onchange=e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{
+    const k=Math.min(1,240/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    cur.emblem=c.toDataURL('image/png');renderHead();queue()};im.src=fr.result};fr.readAsDataURL(f);
+};
+$('#drw').onclick=()=>setDraw(!dr);
+$('#clr').onclick=e=>{if(cur.ink.length)twice(e.currentTarget,'Точно очистити?',()=>ink.clear())};
+$('#back').onclick=toMenu;
+$('#exp').onclick=exportHTML;
+$('#prn').onclick=()=>{flush();document.title=cur.title||'Документ';window.print()};
+$('#expAll').onclick=()=>docs.length?save('blank-editor-backup',JSON.stringify(docs),'application/json'):alert('Немає документів для експорту.');
+$('#imp').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const j=JSON.parse(await f.text()),a=Array.isArray(j)?j:[j];let n=0;
+    a.forEach(d=>{if(d&&(typeof d.text==='string'||typeof d.html==='string')){docs.push(norm({...d,title:String(d.title||'Імпортований документ'),id:uid(),updated:Date.now()}));n++}});
+    persist();renderMenu();alert(`Імпортовано документів: ${n}`)}catch(x){alert('Не вдалося прочитати файл.')}
+};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&cur){e.preventDefault();flush()}});
+window.addEventListener('beforeunload',flush);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+document.addEventListener('click',e=>{const b=e.target.closest('button,label.btn');if(b&&b.blur)b.blur()});
+load();renderMenu();
+ink=inkInit($('#a4'),$('#ink'),[],queue);
+</script>
+</body>
 </html>
